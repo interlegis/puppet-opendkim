@@ -1,0 +1,3 @@
+<% for i in (0..@maildomains.length-1) do -%>
+default._domainkey.<%=maildomains[i]%> <%=maildomains[i]%>:default:/etc/opendkim/keys/<%=maildomains[i]%>/default.private
+<% end -%>
