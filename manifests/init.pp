@@ -69,6 +69,10 @@ class opendkim (
       notify => Service["opendkim"],
     }
 
+    ## Install DKIM Keys
+    opendkim::dkimkey { $maildomains: 
+      require => File['/etc/opendkim/keys'],
+    }
 
   }
 

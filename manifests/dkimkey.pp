@@ -1,27 +1,25 @@
 # opendkim::dkimkey.pp
 
-define opendkim::dkimkey ( 
-  $keydir = '/etc/puppet/files/dkimkeys/',
-) {
+define opendkim::dkimkey {
 
-  file { "$keydir/$name":
+  file { "/etc/opendkim/keys/$name":
     ensure => directory,
-    require => File[$keydir],
-    notify => Exec["opendkim genkey $name"],
+    require => File["/etc/opendkim/keys"],
+  }
+  file { "/etc/opendkim/keys/$name/default.private":
+    ensure => "present",
+    owner => "opendkim", group => "opendkim", mode => 440,
+    source => "puppet:///files/dkimkeys/$name/default.private",
+    require => File["/etc/opendkim/keys/$name"],
+    notify => Service["opendkim"],
+  }
+  file { "/etc/opendkim/keys/$name/default.txt":
+    ensure => "present",
+    owner => "root", group => "root", mode => 440,
+    source => "puppet:///files/dkimkeys/$name/default.txt",
+    require => File["/etc/opendkim/keys/$name"],
+    notify => Service["opendkim"],
   }
 
-  exec { "opendkim genkey $name":
-    cwd => "$keydir/$name",
-    command => "opendkim-genkey -r -d $name",
-    creates => "$keydir/$name/default.private",
-    timeout => 30,
-    refreshonly => true,
-  }
 
-  file { ["$keydir/$name/default.private","$keydir/$name/default.txt"]:
-    owner => 'puppet',
-    group => 'root',
-    mode  => '440',
-    require => Exec["opendkim genkey $name"],
-  }
 }

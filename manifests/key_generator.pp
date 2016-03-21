@@ -12,7 +12,7 @@ class opendkim::key_generator ( $maildomains = [],
     mode   => '550',
   }
 
-  opendkim::dkimkey { $maildomains:
+  opendkim::dkimkey_master { $maildomains:
     keydir => $keydir,
   }
 
